@@ -28,7 +28,7 @@
                   </v-list-tile>
                   <v-list-tile :key="item.id + '-action'" class="action-wrapper">
                     <v-list-tile-action>
-                      <v-btn :disabled="disabled" v-on:click.native="savaProject(item.title, item.overview)" class="primary no-left-margin">use as script</v-btn>
+                      <v-btn :disabled="disabled" v-on:click.native="saveProject(item.title, item.overview)" class="primary no-left-margin">use as script</v-btn>
                     </v-list-tile-action>
                   </v-list-tile>
                   <v-divider :key="item.id + 'separator'" v-if='validate(index)'></v-divider>
@@ -37,6 +37,32 @@
             </v-card>
             <!-- end results list-->
           </v-flex>
+      </v-layout>
+      <v-layout row justify-center>
+        <v-dialog v-model="dialog" persistent max-width="290">
+          <v-card>
+            <v-card-title class="headline">Successfully created project</v-card-title>
+            <v-card-text>
+              <p>This is the id of your project <strong>{{projectId}}.</strong><br />Please copy this id and check the state on the projects page</p></v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+                <v-btn color="green darken-1" flat @click.native="dialog = false">ok</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-layout>
+      <v-layout row justify-center>
+        <v-dialog v-model="errorDialog" persistent max-width="290">
+          <v-card>
+            <v-card-title class="headline">Error</v-card-title>
+            <v-card-text>
+              <p>There was a problem creating the project</p></v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+                <v-btn color="green darken-1" flat @click.native="errorDialog = false">ok</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-layout>
     </v-container>
   </section>
@@ -52,6 +78,9 @@ export default {
       keyword: null,
       searchResults: null,
       disabled: false,
+      dialog: false,
+      errorDialog: false,
+      projectId: null,
     };
   },
   methods: {
@@ -74,7 +103,7 @@ export default {
       }
       return 'OVERVIEW IS EMPTY';
     },
-    savaProject(title, overview) {
+    saveProject(title, overview) {
       this.disabled = true;
       axios.post('/projects', {
         title,
@@ -82,10 +111,14 @@ export default {
       })
         .then((res) => {
           this.disabled = false;
+          this.projectId = res.data.project.id;
+          this.dialog = true;
         })
         .catch((e) => {
           this.disabled = false;
+          this.errorDialog = true;
         });
+
     },
   },
 };

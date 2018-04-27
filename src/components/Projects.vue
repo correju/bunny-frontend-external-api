@@ -71,7 +71,7 @@ export default {
         if (this.project.reads && this.project.reads.length > 0) {
           const urls = this.project.reads[0].urls;
           console.log(urls);
-          this.mp3 = urls[Object.keys(urls)[0]].default
+          this.mp3 = urls[Object.keys(urls)[0]].default;
           this.audioPresent = this.mp3.indexOf('.mp3') > -1;
         }
         console.log(this.project);
